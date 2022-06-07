@@ -5,8 +5,8 @@ Since forever, our volunteer organization has assigned classes to students by ha
 
 # Timeline
 
-1. Get 'hard coded' responses parsed and assigned classes to motivate general approach (1-2 days)
+1. Get 'hard coded' responses parsed and assigned classes to motivate general approach (1-2 days) (DONE! in archive folder)
 
-2. Write reusable scripts for subsequent years (2 days)
+2. Write reusable scripts for subsequent years (2 days) (in progress)
 
 3. Incorporate into concurrent modernization of UEAA Fun Fun data collection (1 month, not including the time for this S E C R E T project)
