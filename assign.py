@@ -10,16 +10,20 @@ import random
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), "data"))
 
+__sheet_location__ = os.path.realpath(
+    os.path.join(os.getcwd(), "sheets"))
+
 #Open classes and parse to id->name, name -> id dicts
 cInfo = dict()
 nameToId = dict()
 with open(os.path.join(__location__, 'classes.csv'),"r+") as classes:
     for line in classes.readlines():
         splitted = line.split(",")
-        cInfo[splitted[0]] = {"name" : splitted[1], "max" : int(splitted[2]), "size" : 0, "roster" : []}
+        cInfo[splitted[0]] = {"name" : splitted[1], "time" : splitted[3], "max" : int(splitted[2]), "size" : 0, "roster" : []}
         nameToId[splitted[1]] = splitted[0]
 
-
+for i in cInfo:
+    print(cInfo[i])
 
 with open(os.path.join(__location__,"responses.json")) as jFile:
     data = json.load(jFile)
@@ -56,10 +60,9 @@ random.shuffle(enum)
 #takes the original pData and removes irrelevant fields
 #ship of theseus
 #Last	First	Year	Age	Gender	Class	Class Location	Special Considerations	Primary Contact	Primary #	Relationship	Secondary Contact	Secondary #	Relationship	Self Dismisal?	Leave with Relative/Sibling	Shirt Size
-def process(pData, cName):
+def process(pData):
     res = dict()
     
-    res["Class"] = cName
     res["Last"] = pData["lastName"]
     res["First"] = pData["firstName"]
     if "gender" in pData:
@@ -112,7 +115,7 @@ def process(pData, cName):
     return res
 #args: pData - idData[i]
 #      info - class info dict
-#returns: list of chosen classes. Will also update cInfo with new size and roster addition
+#returns: chosen classes added and reformats old pData (not in place). Will also update cInfo with new size and roster addition
 def getPicks(pData, info):
     res = []
     
@@ -121,9 +124,16 @@ def getPicks(pData, info):
             if len(res) == 2:
                 return res 
             if info[nameToId[curr]]["size"] < info[nameToId[curr]]["max"]:
-                res.append(curr)
-                info[nameToId[curr]]["size"] += 1
-                info[nameToId[curr]]["roster"].append(process(pData["row"],info[nameToId[curr]]["name"]))
+
+                #check not 2 classess at same time period
+                if len(res) == 1 and info[nameToId[curr]]["time"] == info[nameToId[res[0]]]["time"]:
+                    print(f"{res[0]} and {curr} are at the same time!")
+                else:
+                    res.append(curr)
+                    info[nameToId[curr]]["size"] += 1
+
+                    ppData = process(pData["row"])
+                    info[nameToId[curr]]["roster"].append(ppData)
     return res
 
             
@@ -131,6 +141,18 @@ def getPicks(pData, info):
 
 for i in enum:
     idData[i]["assigned"] = getPicks(idData[i],cInfo)
+    print(idData[i][1],idData[i][2],idData[i][3])
+    print(idData[i]["assigned"])
+    
+    #now that classes are assigned for this participant assigned, add both classes and process fields
+    idData[i]["row"] = process(idData[i]["row"])
+    
+    idData[i]["row"]["class1"] = ""
+    idData[i]["row"]["class2"] = ""
+    if len(idData[i]["assigned"]) >= 1:
+        idData[i]["row"]["class1"] = idData[i]["assigned"][0]
+    if len(idData[i]["assigned"]) == 2:
+        idData[i]["row"]["class2"] = idData[i]["assigned"][1] 
 
 for i in cInfo:
     entry = cInfo[i]
@@ -138,29 +160,28 @@ for i in cInfo:
 
 numUnass = 0
 for i in enum:
-    if idData[i]["assigned"] == 0:
+    if len(idData[i]["assigned"]) == 0:
         numUnass += 1
 
 numLess = 0
 for i in enum:
-    if len(idData[i]["assigned"]) > len(idData[i][1]):
+    if len(idData[i]["assigned"]) < len(idData[i][1]):
         numLess += 1
+        print(idData[i]["row"]["First"],idData[i]["assigned"],idData[i][1])
 print(f"there are {numUnass} students without any classes")
 print(f"there are {numLess} students with one class when they wanted two")
 
 
-for i in cInfo:
-    for r in cInfo[i]["roster"]:
-        print(r)
-with open(os.path.join(__location__,"assigned.json"),"w+") as new:
-    json.dump(cInfo,new)
+# with open(os.path.join(__sheet_location__,"assigned.json"),"w+") as new:
+#     json.dump(cInfo,new)
 
 #Now since spreadsheets are important, lets turn this json into a bunch of csvs L
 #Also an overall one
 overall = dict()
+okeys = idData[i]["row"].keys()
 keys = cInfo["1"]["roster"][0].keys()
-with open(os.path.join(__location__,"overall.csv"),"w+") as o:
-    oWrite = csv.DictWriter(o, keys)
+with open(os.path.join(__sheet_location__,"overall.csv"),"w+") as o:
+    oWrite = csv.DictWriter(o, okeys)
     oWrite.writeheader()
     
     for i in cInfo:
@@ -169,12 +190,13 @@ with open(os.path.join(__location__,"overall.csv"),"w+") as o:
 
 
 
-        with open(os.path.join(__location__,f'{re.sub(r"[^a-zA-Z0-9]","",name)}.csv'),"w+") as c:
+        with open(os.path.join(__sheet_location__,f'{re.sub(r"[^a-zA-Z0-9]","",name)}.csv'),"w+") as c:
             w = csv.DictWriter(c, keys)
             w.writeheader()
             w.writerows(entry["roster"])
         
-        oWrite.writerows(entry["roster"])
+    
+    oWrite.writerows([idData[i]["row"] for i in idData])
 
 #NOTE: CVS is a stupid broken format for most use cases
 # #Open responses
