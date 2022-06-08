@@ -46,6 +46,3 @@ class Loader:
     '''
     def getResponses(self):
         return self.responses
-
-    def nameToId(self):
-        return self.nameId

@@ -40,17 +40,18 @@ class Map(HoF):
     '''
     applyMap: ('a -> 'b) -> 'a list -> 'b list :)
     '''
-    def applyMap(self,obj):
+    def applyMap(self,xs):
         res = []
-        for i in obj:
-            res.append(self.mapFunc(obj))
+        for x in xs:
+            res.append(self.mapFunc(x))
         self.lastApp = res
+
         return res
 
-    def mapZip(self,obj1,obj2):
+    def mapZip(self,xs,ys):
         res = []
-        for i in range(min(len(obj1),len(obj2))):
-            res.append(self.mapFunc(obj1[i]),self.mapFunc(obj2[i]))
+        for i in range(min(len(xs),len(ys))):
+            res.append(self.mapFunc(xs[i]),self.mapFunc(ys[i]))
 
         self.lastApp = res 
         return res
