@@ -128,8 +128,8 @@ class ResponseUtils(Utils):
 
         return None
 
-    def setResponse(self,id,attr,val):
-        self.responseInfo[id][attr] = val
+    def setResponse(self,id,attr,val):        
+        self.getResponse(id)[attr] = val
 
     def getSize(self):
         return len(self.responseInfo)
