@@ -1,8 +1,6 @@
 
 from random import shuffle
 from utils import *
-# how we assign classes. Should come with a function that prints
-#metrics
 class Strategy:
     def __init__(self,cutil,rutil):
         self.cutil = cutil 
@@ -47,7 +45,7 @@ class Strategy:
         print("\n--------------------------------Missing Classes--------------------------------")
         print(f"{aMiss} students do not have an AM class")
         print(f"{pMiss} students do not have an PM class")
-        print(f"{bothMiss} have neither")
+        print(f"{bothMiss} have neither\n")
 
 
 

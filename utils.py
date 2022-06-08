@@ -1,6 +1,10 @@
+import csv
 import os
+import re
 from Loader import *
 from hof import *
+
+
 '''
 Utilities for handling and transforming class data
 '''
@@ -65,13 +69,16 @@ class Utils:
         
         return True
 
+
     #returns true iff add successful
     @staticmethod 
     def addToClass(cid,rid,cutil,rutil):
         if Utils.canAdd(cid,rid,cutil,rutil):
+            #set first before adding to roster
+            rutil.setResponse(rid,f"{cutil.getClassAttr(cid,'time')} class",cutil.getClassAttr(cid,'name'))
             cutil.setClassAttr(cid,"size",cutil.getClassAttr(cid,"size") + 1)
             cutil.getClassAttr(cid,"roster").append(rutil.getResponse(rid))
-            rutil.setResponse(rid,f"{cutil.getClassAttr(cid,'time')} class",cutil.getClassAttr(cid,'name'))
+            
             return True 
             
         return False
@@ -88,6 +95,9 @@ class ClassUtils(Utils):
         for i in self.classInfo:
             self.nameToId[self.classInfo[i]["name"]] = i
 
+    def numClasses(self):
+        return len(self.classInfo)
+
     def getClass(self,id):
         return self.classInfo[id]
 
@@ -103,15 +113,40 @@ class ClassUtils(Utils):
     def getName(self,id):
         return self.getClassAttr(id,"name")
 
-    
+    def getSize(self,id):
+        return self.getClassAttr(id,"size")
+
+    def getCapacity(self,id):
+        return self.getClassAttr(id,"capacity")
+
+    def getRoster(self,id):
+        return self.getClassAttr(id,"roster")
+
+    def getTime(self,id):
+        return self.getClassAttr(id,"time")
 
 
     def sameTime(self,id1,id2):
         return self.classInfo[id1]["time"] == self.classInfo[id2]["time"]
-    
-    
 
 
+    '''
+    Include an optional condtion function that takes in a cid and self, and adds its size if true
+    '''
+    def totalSize(self,condFunc=None):
+        res = 0
+        for cid in range(self.numClasses()):
+            if condFunc(cid,self):
+                res += self.getCapacity(cid)
+        return res
+
+    def publishClasses(self):
+        keys = ["First","Last","Gender","YOB", 'Special Considerations', 'Primary Contact', 'Primary Telephone', 'Primary Relationship', 'Secondary Contact', 'Secondary Telephone', 'Secondary Relationship', 'Self Dismissed?', 'Dismiss to', 'Dismiss Relationship', 'Shirt Size', 'first choices', 'second choices', 'third choices', 'AM class', 'PM class']
+        for cid in self.classInfo:
+            with open(os.path.join(self.outputPath,f'{re.sub(r"[^a-zA-Z0-9]","",self.getName(cid))}.csv'),"w+") as classF:
+                classWriter = csv.DictWriter(classF,keys)
+                classWriter.writeheader()
+                classWriter.writerows(self.getRoster(cid))
     
 
 class ResponseUtils(Utils):
@@ -156,5 +191,14 @@ class ResponseUtils(Utils):
                 if cutil.getClassAttr(cutil.getId(curr),"time") == time:
                     res.append(curr)
         
-        #print(f"{time} choices: {res}")
         return res
+
+    '''
+    This will save and write everything to the output directory
+    '''
+    def publishOverall(self):
+        keys = ["First","Last","Gender","YOB", 'Special Considerations', 'Primary Contact', 'Primary Telephone', 'Primary Relationship', 'Secondary Contact', 'Secondary Telephone', 'Secondary Relationship', 'Self Dismissed?', 'Dismiss to', 'Dismiss Relationship', 'Shirt Size', 'first choices', 'second choices', 'third choices', 'AM class', 'PM class']
+        with open(os.path.join(self.outputPath,"MASTER.csv"),"w+") as master:
+            masterWriter = csv.DictWriter(master,keys)
+            masterWriter.writeheader()
+            masterWriter.writerows([self.responseInfo[i] for i in self.responseInfo])
