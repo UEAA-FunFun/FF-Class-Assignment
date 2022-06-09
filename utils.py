@@ -55,10 +55,23 @@ class Utils:
     '''
     @staticmethod
     def setDir(pathStr : str) -> str:
+        """
+        Set the directory to the current working directory, and then append the pathStr.
+        @param pathStr - the path to append to the current working directory.
+        @returns the path to the directory.
+        """
         return os.path.realpath(os.path.join(os.getcwd(), pathStr))
 
     @staticmethod
     def canAdd(cid,rid,cutil,rutil):
+        """
+        Check if a class can be added to the class utilization dictionary.
+        @param cid - the class id
+        @param rid - the rotation id
+        @param cutil - the class utilization dictionary
+        @param rutil - the rotation utilization dictionary
+        @returns True if the class can be added, False otherwise.
+        """
         #classes can only be filled to capacity
         if cutil.getClassAttr(cid,"size") >= cutil.getClassAttr(cid,"capacity"): 
             return False
@@ -70,8 +83,15 @@ class Utils:
         return True
 
 
-    #returns true iff add successful
-    @staticmethod 
+    """
+        Add a response to a class. If the class is full, return false. Otherwise, add the response to the class and return true.
+        @param cid - the class id           
+        @param rid - the response id           
+        @param cutil - the class util           
+        @param rutil - the response util           
+        @return True if the response was added to the class, false otherwise.           
+        """
+    @staticmethod   
     def addToClass(cid,rid,cutil,rutil):
         if Utils.canAdd(cid,rid,cutil,rutil):
             #set first before adding to roster
@@ -96,37 +116,97 @@ class ClassUtils(Utils):
             self.nameToId[self.classInfo[i]["name"]] = i
 
     def numClasses(self):
+        """
+        Return the number of classes in the dataset.
+        @return The number of classes in the dataset.
+        """
         return len(self.classInfo)
 
     def getClass(self,id):
+        """
+        Given an id, return the class name.
+        @param id - the id of the class
+        @return the class name
+        """
         return self.classInfo[id]
 
     def setClassAttr(self,id,attr,val):
+        """
+        Set the attribute of a class to a value.
+        @param self - the class itself
+        @param id - the id of the class
+        @param attr - the attribute to set
+        @param val - the value to set the attribute to
+        """
         self.getClass(id)[attr] = val 
 
     def getClassAttr(self,id,attr):
+        """
+        Get the attribute of a class.
+        @param self - the class itself
+        @param id - the id of the class
+        @param attr - the attribute of the class
+        @returns the attribute of the class
+        """
         return self.getClass(id)[attr]
     
     def getId(self,name):
+        """
+        Given a name, return the id of the camera.
+        @param name - the name of the camera
+        @return the id of the camera
+        """
         return self.nameToId[name]
 
     def getName(self,id):
+        """
+        Given an id, return the name of the class.
+        @param self - the class itself
+        @param id - the id of the class
+        @return the name of the class
+        """
         return self.getClassAttr(id,"name")
 
     def getSize(self,id):
+        """
+        Get the size of the object from the object id.
+        @param id - the object id
+        @return the size of the object
+        """
         return self.getClassAttr(id,"size")
 
     def getCapacity(self,id):
+        """
+        Get the capacity of the class.
+        @param id - the id of the class
+        @return the capacity of the class
+        """
         return self.getClassAttr(id,"capacity")
 
     def getRoster(self,id):
+        """
+        Get the roster for a given class.
+        @param id - the class id
+        @return the roster
+        """
         return self.getClassAttr(id,"roster")
 
     def getTime(self,id):
+        """
+        Get the time of the event.
+        @param id - the id of the event
+        @return the time of the event
+        """
         return self.getClassAttr(id,"time")
 
 
     def sameTime(self,id1,id2):
+        """
+        Check if two classes are in the same time slot.
+        @param id1 - the first class id
+        @param id2 - the second class id
+        @returns True if they are in the same time slot, False otherwise
+        """
         return self.classInfo[id1]["time"] == self.classInfo[id2]["time"]
 
 
@@ -134,6 +214,11 @@ class ClassUtils(Utils):
     Include an optional condtion function that takes in a cid and self, and adds its size if true
     '''
     def totalSize(self,condFunc=None):
+        """
+        Given a condition function, return the total number of items in the warehouse.
+        @param condFunc - the condition function
+        @return the total number of items in the warehouse
+        """
         res = 0
         for cid in range(self.numClasses()):
             if condFunc(cid,self):
@@ -141,6 +226,10 @@ class ClassUtils(Utils):
         return res
 
     def publishClasses(self):
+        """
+        Publish the class roster to a csv file.
+        @param self - the class object itself
+        """
         keys = ["First","Last","Gender","YOB", 'Special Considerations', 'Primary Contact', 'Primary Telephone', 'Primary Relationship', 'Secondary Contact', 'Secondary Telephone', 'Secondary Relationship', 'Self Dismissed?', 'Dismiss to', 'Dismiss Relationship', 'Shirt Size', 'first choices', 'second choices', 'third choices', 'AM class', 'PM class']
         for cid in self.classInfo:
             with open(os.path.join(self.outputPath,f'{re.sub(r"[^a-zA-Z0-9]","",self.getName(cid))}.csv'),"w+") as classF:
@@ -155,6 +244,12 @@ class ResponseUtils(Utils):
         self.responseInfo = self.listToDict(self.map.applyMap(self.loader.getResponses()))
 
     def getResponse(self,id):
+        """
+        Given an id, return the response for that id.
+        @param self - the object itself
+        @param id - the id we are looking for
+        @return the response for that id
+        """
         return self.responseInfo[id]
 
     def getAttr(self,id,attr):
@@ -164,14 +259,30 @@ class ResponseUtils(Utils):
         return None
 
     def setResponse(self,id,attr,val):        
+        """
+        Set the response of the node with the given id to the given value.
+        @param id - the id of the node to set the response of.
+        @param attr - the attribute to set.
+        @param val - the value to set the attribute to.
+        """
         self.getResponse(id)[attr] = val
 
     def getSize(self):
+        """
+        Get the size of the response array.
+        @return The size of the response array.
+        """
         return len(self.responseInfo)
     
 
 
     def isRegistered(self,id,time):
+        """
+        Check if the id is registered at the given time.
+        @param id - the id to check against
+        @param time - the time to check against
+        @returns true if the id is registered at the given time, false otherwise
+        """
         return self.getAttr(id,f"{time} class") != None
 
     
@@ -179,6 +290,13 @@ class ResponseUtils(Utils):
     requires cutil to query time
     '''
     def getTimeChoices(self,id,time,cutil):
+        """
+        Given an id, time, and cutil, return the ids of the first, second, and third choices for that time.
+        @param id - the id of the current node
+        @param time - the time of the current node
+        @param cutil - the cutil object
+        @returns the ids of the first, second, and third choices for that time.
+        """
         
         fst = self.getAttr(id,"first choices")
         snd = self.getAttr(id,"second choices")
@@ -197,6 +315,10 @@ class ResponseUtils(Utils):
     This will save and write everything to the output directory
     '''
     def publishOverall(self):
+        """
+        Write the response info to a csv file.
+        @param self - the object itself
+        """
         keys = ["First","Last","Gender","YOB", 'Special Considerations', 'Primary Contact', 'Primary Telephone', 'Primary Relationship', 'Secondary Contact', 'Secondary Telephone', 'Secondary Relationship', 'Self Dismissed?', 'Dismiss to', 'Dismiss Relationship', 'Shirt Size', 'first choices', 'second choices', 'third choices', 'AM class', 'PM class']
         with open(os.path.join(self.outputPath,"MASTER.csv"),"w+") as master:
             masterWriter = csv.DictWriter(master,keys)
