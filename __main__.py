@@ -3,8 +3,8 @@ from strategy import *
 from mappers import *
 
 def main():
-    cutil = ClassUtils(Mapper2022.cProcess,"data","output")
-    rutil = ResponseUtils(Mapper2022.rProcess,"data","output")
+    cutil = ClassUtils(Mapper2023.cProcess,"data","output")
+    rutil = ResponseUtils(Mapper2023.rProcess,"data","output")
 
 
     strategy = GreedyRandomStudent(cutil,rutil)
