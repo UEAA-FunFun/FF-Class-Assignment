@@ -1,112 +1,142 @@
 [
     {
-      "name": "Starting from Scratch",
-      "size": 20,
-      "time": "PM"
-    },
-    {
-      "name": "Flag Football",
-      "size": 16,
-      "time": "AM"
-    },
-    {
-      "name": "Fun in the Sun: Neighborhood Games",
-      "size": 20,
-      "time": "AM"
-    },
-    {
       "name": "Applied Math: Graph Theory",
-      "size": 20,
-      "time": "PM"
+      "time": "PM",
+      "size": 15
     },
     {
-      "name": "Painting",
-      "size": 20,
-      "time": "PM"
+      "name": "Architecture/Interior Design",
+      "time": "AM",
+      "size": 20
     },
     {
-      "name": "Soccer",
-      "size": 20,
-      "time": "AM"
-    },
-    {
-      "name": "Track and Field/ Kick Ball",
-      "size": 15,
-      "time": "AM"
-    },
-    {
-      "name": "Experimental Science",
-      "size": 20,
-      "time": "AM"
-    },
-    {
-      "name": "Taekwondo",
-      "size": 25,
-      "time": "PM"
+      "name": "Artistic Exploration: Unleash the Imagination",
+      "time": "AM",
+      "size": 15
     },
     {
       "name": "Arts and Crafts",
-      "size": 20,
-      "time": "PM"
+      "time": "PM",
+      "size": 20
+    },
+    {
+      "name": "Arts & Crafts in Space",
+      "time": "AM",
+      "size": 15
+    },
+    {
+      "name": "Basketball AM",
+      "time": "AM",
+      "size": 12
+    },
+    {
+      "name": "Basketball PM",
+      "time": "PM",
+      "size": 20
+    },
+    {
+      "name": "Data Science",
+      "time": "AM",
+      "size": 10
     },
     {
       "name": "Debate And Public Speaking",
-      "size": 15,
-      "time": "PM"
+      "time": "PM",
+      "size": 10
     },
     {
-      "name": "Ultimate Frisbee",
-      "size": 20,
-      "time": "AM"
-    },
-    {
-      "name": "Introduction to the Art of Storytelling",
-      "size": 15,
-      "time": "AM"
-    },
-    {
-      "name": "Creative Writing",
-      "size": 15,
-      "time": "PM"
-    },
-    {
-      "name": "Make Your Own Comics",
-      "size": 15,
-      "time": "AM"
-    },
-    {
-      "name": "Mock Trial",
-      "size": 15,
-      "time": "AM"
-    },
-    {
-      "name": "Digital Design",
-      "size": 15,
-      "time": "AM"
-    },
-    {
-      "name": "Junior Chef",
-      "size": 12,
-      "time": "PM"
+      "name": "Electronics",
+      "time": "AM",
+      "size": 15
     },
     {
       "name": "Ethical Intelligence",
-      "size": 15,
-      "time": "PM"
+      "time": "PM",
+      "size": 15
     },
     {
-      "name": "Ukulele",
-      "size": 15,
-      "time": "AM"
+      "name": "First Aid/Wilderness Skills",
+      "time": "AM",
+      "size": 25
     },
     {
-      "name": "Life By the Sea!: Arts and Crafts",
-      "size": 15,
-      "time": "AM"
+      "name": "Flag Football",
+      "time": "AM",
+      "size": 16
     },
     {
-      "name": "Basketball",
-      "size": 20,
-      "time": "PM"
+      "name": "Fun in the Sun: Neighborhood Games",
+      "time": "AM",
+      "size": 20
+    },
+    {
+      "name": "Gardening and Composting",
+      "time": "PM",
+      "size": 16
+    },
+    {
+      "name": "International Chess AM",
+      "time": "AM",
+      "size": 16
+    },
+    {
+      "name": "International Chess PM",
+      "time": "PM",
+      "size": 16
+    },
+    {
+      "name": "Intro to Physics and Engineering",
+      "time": "PM",
+      "size": 16
+    },
+    {
+      "name": "Intro to Ukulele",
+      "time": "PM",
+      "size": 15
+    },
+    {
+      "name": "Junior Chef",
+      "time": "PM",
+      "size": 15
+    },
+    {
+      "name": "Make Your Own Comics",
+      "time": "AM",
+      "size": 15
+    },
+    {
+      "name": "Mock Trial",
+      "time": "AM",
+      "size": 15
+    },
+    {
+      "name": "Painting",
+      "time": "PM",
+      "size": 20
+    },
+    {
+      "name": "Soccer",
+      "time": "AM",
+      "size": 20
+    },
+    {
+      "name": "Taekwondo",
+      "time": "PM",
+      "size": 35
+    },
+    {
+      "name": "The Crafts Corner",
+      "time": "PM",
+      "size": 10
+    },
+    {
+      "name": "Ultimate Frisbee",
+      "time": "AM",
+      "size": 20
+    },
+    {
+      "name": "Wonders of the Universe",
+      "time": "AM",
+      "size": 16
     }
   ]

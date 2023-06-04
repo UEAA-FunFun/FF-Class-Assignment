@@ -67,7 +67,7 @@ class Utils:
         """
         Check if a class can be added to the class utilization dictionary.
         @param cid - the class id
-        @param rid - the rotation id
+        @param rid - the response id
         @param cutil - the class utilization dictionary
         @param rutil - the rotation utilization dictionary
         @returns True if the class can be added, False otherwise.
@@ -152,7 +152,7 @@ class ClassUtils(Utils):
     
     def getId(self,name):
         """
-        Given a name, return the id of the camera.
+        Given a name, return the id of the class.
         @param name - the name of the camera
         @return the id of the camera
         """
@@ -236,6 +236,8 @@ class ClassUtils(Utils):
                 classWriter = csv.DictWriter(classF,keys)
                 classWriter.writeheader()
                 classWriter.writerows(self.getRoster(cid))
+
+                
     
 
 class ResponseUtils(Utils):
