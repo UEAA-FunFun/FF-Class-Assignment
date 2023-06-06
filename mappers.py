@@ -97,13 +97,13 @@ class Mapper2023:
         
         res["Last"] = pData["Last Name"]
         res["First"] = pData["First Name"]
-        if "gender" in pData:
+        if "Gender" in pData:
             res["Gender"] = pData["Gender"]
         else:
             res["Gender"] = "Not Specified"
         res["YOB"] = pData["Year of Birth"]
 
-        #lmao
+
         if "Special Concerns: Dietary restrictions due to religious or other reasons, food allergies, physical condition, medication, etc. Please specify if any." in pData:
             res["Special Considerations"] = pData["Special Concerns: Dietary restrictions due to religious or other reasons, food allergies, physical condition, medication, etc. Please specify if any."]
         else:
