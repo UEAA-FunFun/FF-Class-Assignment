@@ -102,6 +102,18 @@ class Utils:
             return True 
             
         return False
+    @staticmethod
+    def removeFromClass(cid,rid,cutil,rutil):
+        """
+        Remove a response from a class.
+        @param cid - the class id
+        @param rid - the response id
+        """
+        if rutil.removeResponse(rid,f"{cutil.getClassAttr(cid,'time')} class") == None:
+            return False
+        cutil.setClassAttr(cid,"size",cutil.getClassAttr(cid,"size") - 1)
+        cutil.getClassAttr(cid,"roster").remove(rutil.getResponse(rid))
+        return True
 class ClassUtils(Utils):
     '''
     argmapper should have maps to: name, time, max, size, roster
@@ -268,6 +280,17 @@ class ResponseUtils(Utils):
         @param val - the value to set the attribute to.
         """
         self.getResponse(id)[attr] = val
+    
+    def removeResponse(self,id,attr):
+        """
+        Remove the response of the node with the given id to the given value.
+        @param id - the id of the node to set the response of.
+        @param attr - the attribute to set.
+        """
+        if attr not in self.getResponse(id):
+            print("attribute not found!")
+            return None
+        return self.getResponse(id).pop(attr)
 
     def getSize(self):
         """
