@@ -1,3 +1,97 @@
+#from 2023 onward, should take in rid
+#2023 baby
+#One issue is that the student's name was not seperated into first and last, but we can use the parent's name for now
+class Mapper2023:
+    #UPDATE: Now takes in rid
+    @staticmethod
+    def rProcess(ridAndPData):
+        rid,pData = ridAndPData
+        res = dict()
+
+        res["rid"] = rid
+        
+        res["Last"] = pData["Last Name"]
+        res["First"] = pData["First Name"]
+        if "Gender" in pData:
+            res["Gender"] = pData["Gender"]
+        else:
+            res["Gender"] = "Not Specified"
+        res["YOB"] = pData["Year of Birth"]
+
+
+        if "Special Concerns: Dietary restrictions due to religious or other reasons, food allergies, physical condition, medication, etc. Please specify if any." in pData:
+            res["Special Considerations"] = pData["Special Concerns: Dietary restrictions due to religious or other reasons, food allergies, physical condition, medication, etc. Please specify if any."]
+        else:
+            res["Special Considerations"] = "None"
+
+        res["Primary Contact"] = pData["Primary Contact"]
+        res["Primary Telephone"] = pData["Telephone"]
+        if "relationship" in pData:
+            res["Primary Relationship"] = pData["Relationship"]
+        else:
+            res["Primary Relationship"] = "NA"
+
+        if "Secondary Contact" in pData:
+            res["Secondary Contact"] = pData["Secondary Contact"]
+        else:
+            res["Secondary Contact"] = "None"
+        if "Telephone 2" in pData:
+            res["Secondary Telephone"] = pData["Telephone 2"]
+        else:
+            res["Secondary Telephone"] = "None"
+        if "Relationship 2" in pData:
+            res["Secondary Relationship"] = pData["Relationship 2"]
+        else:
+            res["Secondary Relationship"] = "None"
+        
+        res["Self Dismissed?"] = pData["If participant is age 12 or above, allow self-dismissal?"]
+
+        if "Allow Dismissal With" in pData:
+            res["Dismiss to"] = pData["Allow Dismissal With"]
+        else:
+            res["Dismiss to"] = "NA"
+
+        if "Relationship with student" in pData:
+            res["Dismiss Relationship"] = pData["Relationship with student"]
+        else:
+            res["Dismiss Relationship"] = "NA"
+
+        res["Shirt Size"] = pData["T-Shirt Size"]
+
+
+        #Assume that the columns are combined appropriately
+        #Updated to differentiate between AM and PM
+        #In this data, there is a None of the above option
+        fst = [pData["AM First Choice"],pData["PM First Choice"]]
+        snd = [pData["AM Second Choice"],pData["PM Second Choice"]]
+        trd = [pData["AM Third Choice"],pData["PM Third Choice"]]
+        res["first choices"] = []
+        res["second choices"] = []
+        res["third choices"] = []
+
+        for i in range(2):
+            if fst[i] != "None of the Above":
+                res["first choices"].append(fst[i])
+            if snd[i] != "None of the Above":
+                res["second choices"].append(snd[i])
+            if trd[i] != "None of the Above":
+                res["third choices"].append(trd[i])
+
+
+        return res
+    #this also takes in the cid now
+    @staticmethod
+    def cProcess(cidAndCData):
+        cid,cData = cidAndCData
+        res = dict()
+        res["cid"] = cid 
+        res["name"] = cData["name"]
+        res["capacity"] = int(cData["size"])
+        res["size"] = 0 
+        res["time"] = cData["time"]
+        res["roster"] = []
+        return res
+    
 class Mapper2022:
     @staticmethod
     def rProcess(pData):
@@ -88,92 +182,7 @@ class Mapper2022:
         return res
 
 
-#2023 baby
-#One issue is that the student's name was not seperated into first and last, but we can use the parent's name for now
-class Mapper2023:
-    @staticmethod
-    def rProcess(pData):
-        res = dict()
-        
-        res["Last"] = pData["Last Name"]
-        res["First"] = pData["First Name"]
-        if "Gender" in pData:
-            res["Gender"] = pData["Gender"]
-        else:
-            res["Gender"] = "Not Specified"
-        res["YOB"] = pData["Year of Birth"]
 
-
-        if "Special Concerns: Dietary restrictions due to religious or other reasons, food allergies, physical condition, medication, etc. Please specify if any." in pData:
-            res["Special Considerations"] = pData["Special Concerns: Dietary restrictions due to religious or other reasons, food allergies, physical condition, medication, etc. Please specify if any."]
-        else:
-            res["Special Considerations"] = "None"
-
-        res["Primary Contact"] = pData["Primary Contact"]
-        res["Primary Telephone"] = pData["Telephone"]
-        if "relationship" in pData:
-            res["Primary Relationship"] = pData["Relationship"]
-        else:
-            res["Primary Relationship"] = "NA"
-
-        if "Secondary Contact" in pData:
-            res["Secondary Contact"] = pData["Secondary Contact"]
-        else:
-            res["Secondary Contact"] = "None"
-        if "Telephone 2" in pData:
-            res["Secondary Telephone"] = pData["Telephone 2"]
-        else:
-            res["Secondary Telephone"] = "None"
-        if "Relationship 2" in pData:
-            res["Secondary Relationship"] = pData["Relationship 2"]
-        else:
-            res["Secondary Relationship"] = "None"
-        
-        res["Self Dismissed?"] = pData["If participant is age 12 or above, allow self-dismissal?"]
-
-        if "Allow Dismissal With" in pData:
-            res["Dismiss to"] = pData["Allow Dismissal With"]
-        else:
-            res["Dismiss to"] = "NA"
-
-        if "Relationship with student" in pData:
-            res["Dismiss Relationship"] = pData["Relationship with student"]
-        else:
-            res["Dismiss Relationship"] = "NA"
-
-        res["Shirt Size"] = pData["T-Shirt Size"]
-
-
-        #Assume that the columns are combined appropriately
-        #Updated to differentiate between AM and PM
-        #In this data, there is a None of the above option
-        fst = [pData["AM First Choice"],pData["PM First Choice"]]
-        snd = [pData["AM Second Choice"],pData["PM Second Choice"]]
-        trd = [pData["AM Third Choice"],pData["PM Third Choice"]]
-        res["first choices"] = []
-        res["second choices"] = []
-        res["third choices"] = []
-
-        for i in range(2):
-            if fst[i] != "None of the Above":
-                res["first choices"].append(fst[i])
-            if snd[i] != "None of the Above":
-                res["second choices"].append(snd[i])
-            if trd[i] != "None of the Above":
-                res["third choices"].append(trd[i])
-
-
-        return res
-
-    @staticmethod
-    def cProcess(cData):
-        res = dict()
-        res["name"] = cData["name"]
-        res["capacity"] = int(cData["size"])
-        res["size"] = 0 
-        res["time"] = cData["time"]
-        res["roster"] = []
-        return res
 
 
 
