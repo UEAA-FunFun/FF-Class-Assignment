@@ -16,7 +16,9 @@ class Utils:
     Takes in a function which translates fields from the original json to the following required fields.
 
     REQUIRES: - a data folder containing class data. class data should be a complete csv with id,class name, class size, and time columns ("AM"/"PM"). No header
-              - argmapper must have complete mappings to 
+              - argmapper must have complete mapping:
+        (rid,pData) |->
+                    - rid
                     - Last
                     - First
                     - Gender
@@ -33,7 +35,7 @@ class Utils:
                     - Dismissal Relationshipp
                     - Shirt Size
 
-            see archive/assign2022.py for examples
+            see mappers.py for examples
     '''
     def __init__(self,argmapper,dataName,outputName):
         self.map = Map(argmapper)
@@ -78,6 +80,7 @@ class Utils:
         
         #studnts can only have one class per time
         if rutil.isRegistered(rid,cutil.getClassAttr(cid,"time")):
+            print("ripperino")
             return False 
         
         return True
@@ -97,11 +100,23 @@ class Utils:
             #set first before adding to roster
             rutil.setResponse(rid,f"{cutil.getClassAttr(cid,'time')} class",cutil.getClassAttr(cid,'name'))
             cutil.setClassAttr(cid,"size",cutil.getClassAttr(cid,"size") + 1)
-            cutil.getClassAttr(cid,"roster").append(rutil.getResponse(rid))
+            cutil.addToRoster(cid,rutil.getResponse(rid))
             
             return True 
             
         return False
+    @staticmethod
+    def removeFromClass(cid,rid,cutil,rutil):
+        """
+        Remove a response from a class.
+        @param cid - the class id
+        @param rid - the response id
+        """
+        rutil.removeResponse(rid,f"{cutil.getClassAttr(cid,'time')} class")
+        cutil.setClassAttr(cid,"size",cutil.getClassAttr(cid,"size") - 1)
+        cutil.removeFromRoster(cid,rid)
+        
+        return True
 class ClassUtils(Utils):
     '''
     argmapper should have maps to: name, time, max, size, roster
@@ -110,11 +125,23 @@ class ClassUtils(Utils):
         super().__init__(argmapper, dataName, outputName)
 
         #I want this to be a dictionary
-        self.classInfo = self.listToDict(self.map.applyMap(self.loader.getClasses()))
+        self.classInfo = self.listToDict(self.map.applyMap(enumerate(self.loader.getClasses())))
         self.nameToId = dict()
         for i in self.classInfo:
             self.nameToId[self.classInfo[i]["name"]] = i
 
+    def printClasses(self,filterFunc = lambda x: True):
+        """
+        Print the classes.
+        @param filterFunc - a function that takes in a class and returns true if the class should be printed, false otherwise.
+        """
+
+
+        print("~~~~~~~~~~id: Classes~~~~~~~~~~")
+        for i in self.classInfo: #for each class, print the name and size
+            if filterFunc(self.classInfo[i]):
+                print(str(i) + ": " + self.classInfo[i]["name"] + self.classInfo[i]["time"] + " (" + str(self.classInfo[i]["size"]) + "/" + str(self.classInfo[i]["capacity"]) + ")")
+        print("~~~~~~~~~~~~~~~~~~~~~")
     def numClasses(self):
         """
         Return the number of classes in the dataset.
@@ -129,6 +156,17 @@ class ClassUtils(Utils):
         @return the class name
         """
         return self.classInfo[id]
+    
+    def printClassRoster(self,id):
+        """
+        Print the roster of a class.
+        @param id - the id of the class
+        """
+        currClass = self.getClass(id)
+        print("~~~~~~~~~~id: " + currClass["name"] + " roster~~~~~~~~~~")
+        for student in currClass["roster"]:
+            print(str(student["rid"]) + ": " + student["First"] + " " + student["Last"])
+        print("~~~~~~~~~~~~~~~~~~~~~")
 
     def setClassAttr(self,id,attr,val):
         """
@@ -139,6 +177,8 @@ class ClassUtils(Utils):
         @param val - the value to set the attribute to
         """
         self.getClass(id)[attr] = val 
+
+    
 
     def getClassAttr(self,id,attr):
         """
@@ -157,6 +197,34 @@ class ClassUtils(Utils):
         @return the id of the camera
         """
         return self.nameToId[name]
+
+    def removeFromRoster(self,id,rid):
+        """
+        Remove a response from a class.
+        @param idInRoster - the id of the response in the roster
+        @param rid - the response id
+        """
+        currRoster = self.getClassAttr(id,"roster")
+        for i in range(len(currRoster)):
+            if currRoster[i]["rid"] == rid:
+                idInRoster = i
+                break
+        print("Removing " + currRoster[idInRoster]["First"] + " " + currRoster[idInRoster]["Last"] + " from " + self.getClassAttr(id,"name"))
+        currRoster.pop(idInRoster)
+        self.setClassAttr(id,"roster",currRoster)
+    
+    def addToRoster(self,id,studentData):
+        """
+        Add a response to a class.
+        @param id - the id of the class
+        @param studentData - the student data to add to the class 
+            (this is the data found by calling rutil.getResponse(rid))
+        """
+        print(self.getClass(id).keys())
+        self.getClassAttr(id,"roster").append(studentData)
+         
+        print("Adding " + studentData["First"] + " " + studentData["Last"] + " to " + self.getClassAttr(id,"name"))
+
 
     def getName(self,id):
         """
@@ -230,11 +298,12 @@ class ClassUtils(Utils):
         Publish the class roster to a csv file.
         @param self - the class object itself
         """
-        keys = ["First","Last","Gender","YOB", 'Special Considerations', 'Primary Contact', 'Primary Telephone', 'Primary Relationship', 'Secondary Contact', 'Secondary Telephone', 'Secondary Relationship', 'Self Dismissed?', 'Dismiss to', 'Dismiss Relationship', 'Shirt Size', 'first choices', 'second choices', 'third choices', 'AM class', 'PM class']
+        keys = ["rid","First","Last","Gender","YOB", 'Special Considerations', 'Primary Contact', 'Primary Telephone', 'Primary Relationship', 'Secondary Contact', 'Secondary Telephone', 'Secondary Relationship', 'Self Dismissed?', 'Dismiss to', 'Dismiss Relationship', 'Shirt Size', 'first choices', 'second choices', 'third choices', 'AM class', 'PM class']
         for cid in self.classInfo:
             with open(os.path.join(self.outputPath,f'{re.sub(r"[^a-zA-Z0-9]","",self.getName(cid))}.csv'),"w+") as classF:
                 classWriter = csv.DictWriter(classF,keys)
                 classWriter.writeheader()
+
                 classWriter.writerows(self.getRoster(cid))
 
                 
@@ -243,7 +312,7 @@ class ClassUtils(Utils):
 class ResponseUtils(Utils):
     def __init__(self, argmapper, dataName, outputName):
         super().__init__(argmapper, dataName, outputName)
-        self.responseInfo = self.listToDict(self.map.applyMap(self.loader.getResponses()))
+        self.responseInfo = self.listToDict(self.map.applyMap(enumerate(self.loader.getResponses())))
 
     def getResponse(self,id):
         """
@@ -268,6 +337,18 @@ class ResponseUtils(Utils):
         @param val - the value to set the attribute to.
         """
         self.getResponse(id)[attr] = val
+    
+    def removeResponse(self,rid,attr):
+        """
+        Remove the response of the node with the given id to the given value.
+        @param id - the id of the node to set the response of.
+        @param attr - the attribute to set.
+        """
+        if attr not in self.getResponse(rid):
+            #raise a value error
+            raise ValueError(f"Attribute {attr} not in response {rid}")
+
+        self.setResponse(rid,attr,None)
 
     def getSize(self):
         """
@@ -321,7 +402,7 @@ class ResponseUtils(Utils):
         Write the response info to a csv file.
         @param self - the object itself
         """
-        keys = ["First","Last","Gender","YOB", 'Special Considerations', 'Primary Contact', 'Primary Telephone', 'Primary Relationship', 'Secondary Contact', 'Secondary Telephone', 'Secondary Relationship', 'Self Dismissed?', 'Dismiss to', 'Dismiss Relationship', 'Shirt Size', 'first choices', 'second choices', 'third choices', 'AM class', 'PM class']
+        keys = ["rid","First","Last","Gender","YOB", 'Special Considerations', 'Primary Contact', 'Primary Telephone', 'Primary Relationship', 'Secondary Contact', 'Secondary Telephone', 'Secondary Relationship', 'Self Dismissed?', 'Dismiss to', 'Dismiss Relationship', 'Shirt Size', 'first choices', 'second choices', 'third choices', 'AM class', 'PM class']
         with open(os.path.join(self.outputPath,"MASTER.csv"),"w+") as master:
             masterWriter = csv.DictWriter(master,keys)
             masterWriter.writeheader()

@@ -56,6 +56,22 @@ class Map(HoF):
         self.lastApp = res 
         return res
 
+class Filter(HoF):
+    '''
+    meant to just be a simple filter
+    '''
+    def __init__(self, filterFunc) -> None:
+        super().__init__([filterFunc])
+        self.filterFunc = filterFunc
+
+    def applyFilter(self,xs):
+        res = []
+        for x in xs:
+            if self.filterFunc(x):
+                res.append(x)
+        self.lastApp = res
+        return res
+    
 class Fold(HoF):
     '''
     folds a list. If you want a better explanation, attend my 15-150 hof recitation
