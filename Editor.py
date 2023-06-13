@@ -17,7 +17,7 @@ class Editor(Loader):
 
 
     def loop(self):
-        curr = input("0: View classes\n1: View class rosters\n2: Remove a student\n3: Move Student\ninput:")
+        curr = input("0: View classes\n1: View class rosters\n2: Remove a student\n3: Move Student\n4: Publish Changes\ninput:\n")
         if curr == "0":
             self.cutil.printClasses()
             input("Press enter to continue...")
@@ -56,3 +56,9 @@ class Editor(Loader):
             print("Here is the new roster of class" + self.cutil.getName(int(chosenClass)))
             self.cutil.printClassRoster(int(chosenClass))
             self.cutil.printClassRoster(int(chosenClass2))
+            input("Press enter to continue...")
+
+        elif curr == "4":
+            self.rutil.publishOverall()
+            self.cutil.publishClasses()
+            input("Press enter to continue...")
