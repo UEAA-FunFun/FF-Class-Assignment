@@ -84,9 +84,6 @@ class GreedyRandomStudent(Strategy):
     def eval(self):
         for rid in self.lotto:
             amChoices = self.rutil.getTimeChoices(rid,"AM",self.cutil)
-            #pmChoices = self.rutil.getTimeChoices(rid,"PM",self.cutil)
-
-
             for currClass in amChoices:
                 cid = self.cutil.getId(currClass)
                 if Utils.addToClass(cid,rid,self.cutil,self.rutil):
